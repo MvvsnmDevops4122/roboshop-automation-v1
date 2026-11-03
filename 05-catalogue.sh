@@ -93,17 +93,14 @@ validate $? "Adding Mongo repo"
 dnf install mongodb-mongosh -y &>> $logs_file
 validate $? "Installing MongoDB client"
 
-# Check if the products collection in the catalogue database already has data. If not, load the master data into the collection using the provided master-data.js script.
-product_count=$(mongosh --host mongodb.${domain_name} --quiet --eval 'db.getSiblingDB("catalogue").products.countDocuments()')
-validate $? "Checking if the products collection already has data"
+product_count=$(mongosh --host "mongodb.$domain_name" --quiet --eval 'db.getSiblingDB("catalogue").products.countDocuments()' 2>> $logs_file)
+validate $? "Connecting to MongoDB"
 
-# If the products collection is empty, load the master data into it using the master-data.js script. Otherwise, skip this step.
-if [ $product_count -eq 0 ]; then
-    mongosh --host mongodb.${domain_name} </app/db/master-data.js
-    validate $? "Loading master data into products collection"
+if [ "$product_count" -eq 0 ]; then
+    mongosh --host "mongodb.$domain_name" </app/db/master-data.js &>> $logs_file
+    validate $? "Loading products"
 else
-    echo -e "$(timestamp) [INFO] Products collection already has data...${Y}SKIPPING${N}"
-    
+    echo -e "$(timestamp) [INFO] Products are already loaded...${Y}SKIPPING${N}"
 fi
 
 # Restart the catalogue service to ensure that all changes take effect and the application is running with the latest configuration and data.
