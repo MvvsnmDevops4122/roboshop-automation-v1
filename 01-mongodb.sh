@@ -18,6 +18,13 @@ fi
 # create the logs folder if not exists
 mkdir -p $logs_folder
 
+# Function to print the timestamp
+
+timestamp(){
+    date "+%F %T" 
+}
+
+
 # validate function to check the exit status of the command 
 validate(){
     if [ $1 -ne 0 ]; then
