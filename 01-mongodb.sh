@@ -21,15 +21,14 @@ mkdir -p $logs_folder
 # validate function to check the exit status of the command 
 validate(){
     if [ $1 -ne 0 ]; then
-        echo -e "${2}..${R}FAILED${N}" | tee -a $logs_file
+        echo -e "$(timestamp) [ERROR] ${2}..${R}FAILED${N}" | tee -a $logs_file
         exit 1
     else
-        echo -e "${2}..${G}SUCCESS${N}" | tee -a $logs_file
+        echo -e "$(timestamp) [INFO] ${2}..${G}SUCCESS${N}" | tee -a $logs_file
     fi
 }
-
 # start the script execution 
-echo "Script started execution at $(date +"%F %T")" &>> $logs_file
+echo "$(timestamp) [INFO] ==== Script started Execution =====" | tee -a $logs_file
 
 # copy the mongo repo file to /etc/yum.repos.d/
 cp mongo.repo /etc/yum.repos.d/mongo.repo &>> $logs_file
@@ -51,3 +50,6 @@ validate $? "Updating remote connections to MongoDB"
 # restart the mongodb service to apply the changes
 systemctl restart mongod
 validate $? "Restarting MongoDB"
+
+echo "$(timestamp) [INFO] Script completed in $SECONDS seconds"
+echo "$(timestamp) [INFO] ==== Script completed Execution =====" | tee -a $logs_file
