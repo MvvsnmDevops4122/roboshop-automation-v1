@@ -85,9 +85,8 @@ systemctl start catalogue  &>> $logs_file
 validate $? "Starting and enabling catalogue service"
 
 # Add the MongoDB repository to the system's package manager and install the MongoDB client.
-sed -i -e "s/DOMAIN_NAME/${domain_name}/" $scripts_dir/mongo.repo
-cp $scripts_dir/mongo.repo /etc/yum.repos.d/mongo.repo &>> $logs_file
-validate $? "Adding MongoDB repo"
+cp "$scripts_dir/mongo.repo" /etc/yum.repos.d/mongo.repo
+validate $? "Adding Mongo repo"
 
 
 # Install the MongoDB shell client to allow interaction with the MongoDB database.
